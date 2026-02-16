@@ -13,10 +13,15 @@ class AuthorizationLocators:
     SIGNIN_BUTTON = (By.XPATH, ".//div[contains(@class,'popUp_buttonRow')]//button[text()='Войти']")
     EMAIL_FIELD = (By.XPATH, ".//form[.//h1[text() = 'Войти']]//input[@name='email']")
     PASSWORD_FIELD = (By.XPATH, ".//form[.//h1[text() = 'Войти']]//input[@name='password']")
+
+class HeaderLocators:
+    LOGIN_BUTTON = (By.XPATH, ".//div[contains(@class,'header_flexRow')]//button[text()='Вход и регистрация']")
+    CREATE_NOTICE_BUTTON = (By.XPATH, ".//div[contains(@class,'header_flexRow')]//button[text()='Разместить объявление']")
     LOGOUT_BUTTON = (By.XPATH, ".//div[contains(@class,'header')]//button[contains(@class, 'spanGlobal')]")
+    USERNAME_FIELD = (By.XPATH, ".//div[contains(@class,'header')]//h3")
+    USER_AVATAR = (By.CLASS_NAME, "circleSmall")
 
 class NoticeLocators:
-    CREATE_NOTICE_BUTTON = (By.XPATH, ".//div[contains(@class,'header_flexRow')]//button[text()='Разместить объявление']")
     NAME_FIELD = (By.XPATH, ".//div[contains(@class,'createListingPage')]//input[@name='name']")
     DESCRIPTION_FIELD = (By.XPATH, ".//div[contains(@class,'createListingPage')]//textarea[@name='description']")
     PRICE_FIELD = (By.XPATH, ".//div[contains(@class,'createListingPage')]//input[@name='price']")
@@ -30,7 +35,7 @@ class NoticeLocators:
     SELECTED_CONDITION = (By.XPATH, ".//div[contains(@class,'createListingPage')]//input[@value='Б/У']")
     POST_BUTTON = (By.CSS_SELECTOR, "div[class^='createListingPage'] button[type='submit']")
 
-class SearchLocators:
+class MainPageLocators:
     NAME_FIELD = (By.XPATH, ".//div[contains(@class,'homePage')]//input[@name='name']")
     CATEGORY_DROPDOWN_ARROW_BUTTON = (By.XPATH,
                                       "(.//div[contains(@class,'homePage')]//div[contains(@class, 'dropDownMenu_input')])[1]/button")
