@@ -1,5 +1,6 @@
-from selenium.webdriver.support import expected_conditions
+import pytest
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import helpers
 from locators import RegistrationLocators, HeaderLocators, MainPageLocators
@@ -8,25 +9,128 @@ import data
 
 class TestRegistration:
 
-    def test_registration_success(self, driver):
-        driver.get(data.test_url)
-        driver.find_element(*RegistrationLocators.LOGIN_BUTTON).click()
+    def test_register_user_success(self, driver):
+        driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
 
-        WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
+        wait = WebDriverWait(driver, 10)
 
-        driver.find_element(*RegistrationLocators.NO_ACCOUNT_BUTTON).click()
+        no_account_button = wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
+        no_account_button.click()
+        wait.until(EC.staleness_of(no_account_button))
 
-        WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
+        wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
 
-        driver.find_element(*RegistrationLocators.EMAIL_FIELD).send_keys(helpers.generate_email())
-        driver.find_element(*RegistrationLocators.PASSWORD_FIELD).send_keys(data.user_password)
-        driver.find_element(*RegistrationLocators.REPEAT_PASSWORD_FIELD).send_keys(data.user_password)
+        helpers.fill_registration_form(driver, helpers.generate_email())
+
         driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 
-        WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(HeaderLocators.USERNAME_FIELD))
+        #проверка исчезновения окна регистрации
+        wait.until(
+            EC.invisibility_of_element_located(RegistrationLocators.CONTAINER))
 
-        assert driver.find_element(*HeaderLocators.USERNAME_FIELD).text == 'User.'
+        #проверка перехода на главную страницу по уникальному элементу страницы
+        wait.until(
+            EC.visibility_of_element_located(MainPageLocators.CONTAINER))
+
+        user_name_field = wait.until(
+            EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD)
+        )
+        assert user_name_field.text == 'User.', f"Expected 'User.', but got '{user_name_field.text}'"
         assert driver.find_element(*HeaderLocators.USER_AVATAR).is_displayed()
-        assert driver.find_element(*MainPageLocators.SEARCH_BUTTON).is_displayed()
 
+    @pytest.mark.parametrize("invalid_email",
+        [data.email_without_at, data.email_without_dot, data.email_with_special_chars]
+    )
+    def test_register_user_email_invalid_shows_error(self, driver, invalid_email):
+        driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
+
+        wait = WebDriverWait(driver, 10)
+
+        no_account_button = wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
+        no_account_button.click()
+
+        wait.until(EC.staleness_of(no_account_button))
+
+        wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD)).send_keys(invalid_email)
+
+        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
+
+        message = wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.EMAIL_ERROR))
+
+        assert message.text == 'Ошибка', f"Expected message 'Ошибка', but got '{message.text}'"
+
+        fields_to_check = [
+            RegistrationLocators.EMAIL_FIELD_WRAPPER,
+            RegistrationLocators.PASSWORD_FIELD_WRAPPER,
+            RegistrationLocators.REPEAT_PASSWORD_FIELD_WRAPPER
+        ]
+
+        for locator in fields_to_check:
+            actual_error_class = helpers.has_error_class(wait, locator)
+            actual_hex_color = helpers.get_hex_color(wait, locator)
+
+            assert 'input_inputError' in actual_error_class, f'Поле {locator} не имеет класс inputError'
+            assert actual_hex_color == data.error_color, f'Поле {locator} имеет неправильный цвет {actual_hex_color}'
+
+    def test_register_duplicate_user_shows_error(self, driver):
+        driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
+
+        wait = WebDriverWait(driver, 10)
+
+        no_account_button = wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
+        no_account_button.click()
+
+        wait.until(EC.staleness_of(no_account_button))
+
+        wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
+
+        existing_user_email = helpers.generate_email()
+        helpers.fill_registration_form(driver, existing_user_email)
+        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
+
+        logout_button = wait.until(
+            EC.visibility_of_element_located(HeaderLocators.LOGOUT_BUTTON))
+        logout_button.click()
+
+        wait.until(EC.staleness_of(logout_button))
+
+        wait.until(EC.visibility_of_element_located(HeaderLocators.LOGIN_BUTTON)).click()
+
+        no_account_button = wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
+        no_account_button.click()
+
+        wait.until(EC.staleness_of(no_account_button))
+
+        wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
+
+        helpers.fill_registration_form(driver, existing_user_email)
+
+        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
+
+        message = wait.until(
+            EC.visibility_of_element_located(RegistrationLocators.EMAIL_ERROR))
+
+        assert message.text == 'Ошибка', f"Expected message 'Ошибка', but got '{message.text}'"
+
+        fields_to_check = [
+            RegistrationLocators.EMAIL_FIELD_WRAPPER,
+            RegistrationLocators.PASSWORD_FIELD_WRAPPER,
+            RegistrationLocators.REPEAT_PASSWORD_FIELD_WRAPPER
+        ]
+
+        for locator in fields_to_check:
+            actual_error_class = helpers.has_error_class(wait, locator)
+            actual_hex_color = helpers.get_hex_color(wait, locator)
+
+            assert 'input_inputError' in actual_error_class, f'Поле {locator} не имеет класс inputError'
+            assert actual_hex_color == data.error_color, f'Поле {locator} имеет неправильный цвет {actual_hex_color}'
 
