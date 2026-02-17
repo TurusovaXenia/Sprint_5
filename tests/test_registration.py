@@ -62,7 +62,7 @@ class TestRegistration:
         message = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.EMAIL_ERROR))
 
-        assert message.text == 'Ошибка', f"Expected message 'Ошибка', but got '{message.text}'"
+        assert message.text == 'Ошибка', f"Ожидаемое сообщение 'Ошибка', но получено'{message.text}'"
 
         fields_to_check = [
             RegistrationLocators.EMAIL_FIELD_WRAPPER,
@@ -119,7 +119,7 @@ class TestRegistration:
         message = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.EMAIL_ERROR))
 
-        assert message.text == 'Ошибка', f"Expected message 'Ошибка', but got '{message.text}'"
+        assert message.text == 'Ошибка', f"Ожидаемое сообщение 'Ошибка', но получено '{message.text}'"
 
         fields_to_check = [
             RegistrationLocators.EMAIL_FIELD_WRAPPER,
