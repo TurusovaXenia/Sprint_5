@@ -16,7 +16,9 @@ class TestRegistration:
         no_account_button.click()
         wait.until(EC.staleness_of(no_account_button))
 
-        helpers.register_user(driver, wait, helpers.generate_email())
+        helpers.fill_registration_form(driver, wait, helpers.generate_email())
+
+        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 
         #проверка исчезновения окна регистрации
         wait.until(
@@ -40,7 +42,6 @@ class TestRegistration:
         no_account_button = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
         no_account_button.click()
-
         wait.until(EC.staleness_of(no_account_button))
 
         wait.until(
@@ -76,10 +77,9 @@ class TestRegistration:
 
         wait.until(EC.staleness_of(no_account_button))
 
-        wait.until(
-            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
+        helpers.fill_registration_form(driver, wait, existing_user)
 
-        helpers.register_user(driver, wait, existing_user)
+        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 
         message = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.EMAIL_ERROR))

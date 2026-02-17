@@ -19,12 +19,9 @@ def has_error_class(wait, locator):
     error_class = element.get_attribute('class')
     return error_class
 
-def register_user(driver, wait, email, click_submit=True):
+def fill_registration_form(driver, wait, email):
     wait.until(
         EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
     driver.find_element(*RegistrationLocators.EMAIL_FIELD).send_keys(email)
     driver.find_element(*RegistrationLocators.PASSWORD_FIELD).send_keys(data.user_password)
     driver.find_element(*RegistrationLocators.REPEAT_PASSWORD_FIELD).send_keys(data.user_password)
-
-    if click_submit:
-        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()

@@ -29,7 +29,9 @@ def existing_user(driver, wait):
     wait.until(EC.staleness_of(no_account_button))
 
     email = helpers.generate_email()
-    helpers.register_user(driver, wait, email)
+    helpers.fill_registration_form(driver, wait, email)
+
+    driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 
     wait.until(
         EC.visibility_of_element_located(HeaderLocators.LOGOUT_BUTTON)).click()
