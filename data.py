@@ -1,5 +1,6 @@
 test_url = 'https://qa-desk.stand.praktikum-services.ru/'
 
+existing_user_email = 'testxen12@test.com'
 user_password = 'Qtest11!'
 
 email_without_at = 'useremail.com'

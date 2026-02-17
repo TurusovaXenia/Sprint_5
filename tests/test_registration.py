@@ -1,5 +1,4 @@
 import pytest
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import helpers
@@ -9,22 +8,15 @@ import data
 
 class TestRegistration:
 
-    def test_register_user_success(self, driver):
+    def test_register_user_success(self, driver, wait):
         driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
-
-        wait = WebDriverWait(driver, 10)
 
         no_account_button = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
         no_account_button.click()
         wait.until(EC.staleness_of(no_account_button))
 
-        wait.until(
-            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
-
-        helpers.fill_registration_form(driver, helpers.generate_email())
-
-        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
+        helpers.register_user(driver, wait, helpers.generate_email())
 
         #проверка исчезновения окна регистрации
         wait.until(
@@ -35,18 +27,15 @@ class TestRegistration:
             EC.visibility_of_element_located(MainPageLocators.CONTAINER))
 
         user_name_field = wait.until(
-            EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD)
-        )
+            EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD))
         assert user_name_field.text == 'User.', f"Expected 'User.', but got '{user_name_field.text}'"
         assert driver.find_element(*HeaderLocators.USER_AVATAR).is_displayed()
 
     @pytest.mark.parametrize("invalid_email",
         [data.email_without_at, data.email_without_dot, data.email_with_special_chars]
     )
-    def test_register_user_email_invalid_shows_error(self, driver, invalid_email):
+    def test_register_user_email_invalid_shows_error(self, driver, wait, invalid_email):
         driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
-
-        wait = WebDriverWait(driver, 10)
 
         no_account_button = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
@@ -75,12 +64,11 @@ class TestRegistration:
             actual_hex_color = helpers.get_hex_color(wait, locator)
 
             assert 'input_inputError' in actual_error_class, f'Поле {locator} не имеет класс inputError'
-            assert actual_hex_color == data.error_color, f'Поле {locator} имеет неправильный цвет {actual_hex_color}'
+            assert actual_hex_color == data.error_color, f'Поле {locator} не выделено красным цветом, текущий цвет - {actual_hex_color}'
 
-    def test_register_duplicate_user_shows_error(self, driver):
-        driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
-
-        wait = WebDriverWait(driver, 10)
+    def test_register_duplicate_user_shows_error(self, driver, wait, existing_user):
+        wait.until(
+            EC.visibility_of_element_located(HeaderLocators.LOGIN_BUTTON)).click()
 
         no_account_button = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
@@ -91,30 +79,7 @@ class TestRegistration:
         wait.until(
             EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
 
-        existing_user_email = helpers.generate_email()
-        helpers.fill_registration_form(driver, existing_user_email)
-        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
-
-        logout_button = wait.until(
-            EC.visibility_of_element_located(HeaderLocators.LOGOUT_BUTTON))
-        logout_button.click()
-
-        wait.until(EC.staleness_of(logout_button))
-
-        wait.until(EC.visibility_of_element_located(HeaderLocators.LOGIN_BUTTON)).click()
-
-        no_account_button = wait.until(
-            EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
-        no_account_button.click()
-
-        wait.until(EC.staleness_of(no_account_button))
-
-        wait.until(
-            EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
-
-        helpers.fill_registration_form(driver, existing_user_email)
-
-        driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
+        helpers.register_user(driver, wait, existing_user)
 
         message = wait.until(
             EC.visibility_of_element_located(RegistrationLocators.EMAIL_ERROR))
@@ -132,5 +97,4 @@ class TestRegistration:
             actual_hex_color = helpers.get_hex_color(wait, locator)
 
             assert 'input_inputError' in actual_error_class, f'Поле {locator} не имеет класс inputError'
-            assert actual_hex_color == data.error_color, f'Поле {locator} имеет неправильный цвет {actual_hex_color}'
-
+            assert actual_hex_color == data.error_color, f'Поле {locator} не выделено красным цветом, текущий цвет - {actual_hex_color}'
