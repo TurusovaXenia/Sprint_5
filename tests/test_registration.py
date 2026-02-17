@@ -30,7 +30,7 @@ class TestRegistration:
 
         user_name_field = wait.until(
             EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD))
-        assert user_name_field.text == 'User.', f"Expected 'User.', but got '{user_name_field.text}'"
+        assert user_name_field.text == 'User.', f"Ожидаемое имя пользователя - 'User.', но получено '{user_name_field.text}'"
         assert driver.find_element(*HeaderLocators.USER_AVATAR).is_displayed()
 
     @pytest.mark.parametrize("invalid_email",
