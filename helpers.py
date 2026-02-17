@@ -25,7 +25,6 @@ def register_user(driver, wait, email, click_submit=True):
     driver.find_element(*RegistrationLocators.EMAIL_FIELD).send_keys(email)
     driver.find_element(*RegistrationLocators.PASSWORD_FIELD).send_keys(data.user_password)
     driver.find_element(*RegistrationLocators.REPEAT_PASSWORD_FIELD).send_keys(data.user_password)
-    driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 
     if click_submit:
         driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
