@@ -1,7 +1,7 @@
 from selenium.webdriver.support import expected_conditions as EC
 
 import helpers
-from locators import HeaderLocators, AuthorizationLocators, MainPageLocators
+from locators import HeaderLocators, AuthorizationLocators, HomePageLocators
 import data
 
 class TestLogin:
@@ -20,7 +20,7 @@ class TestLogin:
 
         # проверка перехода на главную страницу по уникальному элементу страницы
         wait.until(
-            EC.visibility_of_element_located(MainPageLocators.CONTAINER))
+            EC.visibility_of_element_located(HomePageLocators.CONTAINER))
 
         user_name_field = wait.until(
             EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD))

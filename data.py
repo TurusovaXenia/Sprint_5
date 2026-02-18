@@ -7,3 +7,6 @@ email_without_dot = 'useremail@com'
 email_with_special_chars = 'useremail!#$%@test.com'
 
 error_color = '#FF6972'
+
+notice_description = 'В набор входит: ткань (лен) и шелковые нитки.'
+notice_price = 2500

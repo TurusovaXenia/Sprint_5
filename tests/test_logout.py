@@ -1,7 +1,7 @@
 from selenium.webdriver.support import expected_conditions as EC
 
 import helpers
-from locators import HeaderLocators, AuthorizationLocators, MainPageLocators
+from locators import HeaderLocators, AuthorizationLocators
 import data
 
 class TestLogout:

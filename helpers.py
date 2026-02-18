@@ -3,7 +3,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
 
 from locators import RegistrationLocators, AuthorizationLocators
-import data
 
 def generate_email(domain='test.com'):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -31,3 +30,7 @@ def fill_login_form(driver, wait, email, password):
         EC.visibility_of_element_located(AuthorizationLocators.EMAIL_FIELD))
     driver.find_element(*AuthorizationLocators.EMAIL_FIELD).send_keys(email)
     driver.find_element(*AuthorizationLocators.PASSWORD_FIELD).send_keys(password)
+
+def generate_notice_name():
+    timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+    return f'Набор_{timestamp}'
