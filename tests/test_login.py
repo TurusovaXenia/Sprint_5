@@ -1,7 +1,7 @@
 from selenium.webdriver.support import expected_conditions as EC
 
 import helpers
-from locators import HeaderLocators, MainPageLocators, AuthorizationLocators
+from locators import HeaderLocators, AuthorizationLocators, MainPageLocators
 import data
 
 class TestLogin:
@@ -24,5 +24,9 @@ class TestLogin:
 
         user_name_field = wait.until(
             EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD))
+
+        user_avatar = wait.until(
+            EC.visibility_of_element_located(HeaderLocators.USER_AVATAR))
+
         assert user_name_field.text == 'User.', f"Ожидаемое имя пользователя - 'User.', но получено '{user_name_field.text}'"
-        assert driver.find_element(*HeaderLocators.USER_AVATAR).is_displayed()
+        assert user_avatar.is_displayed()
