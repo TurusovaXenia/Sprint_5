@@ -14,9 +14,10 @@ class RegistrationLocators:
     CREATE_ACCOUNT_BUTTON = (By.CSS_SELECTOR, "div[class^='popUp_buttonRow'] button[type='submit']")
 
 class AuthorizationLocators:
-    SIGNIN_BUTTON = (By.CSS_SELECTOR, "div[class^='popUp_buttonRow'] button[type='submit']")
+    CONTAINER = (By.CSS_SELECTOR, "form[class^='popUp_shell']")
     EMAIL_FIELD = (By.NAME, "email")
     PASSWORD_FIELD = (By.NAME, "password")
+    SIGNIN_BUTTON = (By.CSS_SELECTOR, "div[class^='popUp_buttonRow'] button[type='submit']")
 
 class HeaderLocators:
     LOGIN_BUTTON = (By.XPATH, ".//button[text()='Вход и регистрация']")

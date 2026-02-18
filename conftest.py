@@ -15,11 +15,11 @@ def driver():
     yield driver
     driver.quit()
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def wait(driver):
     return WebDriverWait(driver, 10)
 
-@pytest.fixture
+@pytest.fixture(scope='function')
 def existing_user(driver, wait):
     driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
 
@@ -29,7 +29,7 @@ def existing_user(driver, wait):
     wait.until(EC.staleness_of(no_account_button))
 
     email = helpers.generate_email()
-    helpers.fill_registration_form(driver, wait, email)
+    helpers.fill_registration_form(driver, wait, email, data.user_password)
 
     driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 

@@ -16,7 +16,7 @@ class TestRegistration:
         no_account_button.click()
         wait.until(EC.staleness_of(no_account_button))
 
-        helpers.fill_registration_form(driver, wait, helpers.generate_email())
+        helpers.fill_registration_form(driver, wait, helpers.generate_email(), data.user_password)
 
         driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 
@@ -77,7 +77,7 @@ class TestRegistration:
 
         wait.until(EC.staleness_of(no_account_button))
 
-        helpers.fill_registration_form(driver, wait, existing_user)
+        helpers.fill_registration_form(driver, wait, existing_user, data.user_password)
 
         driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
 

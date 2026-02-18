@@ -2,7 +2,7 @@ from datetime import datetime
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
 
-from locators import RegistrationLocators
+from locators import RegistrationLocators, AuthorizationLocators
 import data
 
 def generate_email(domain='test.com'):
@@ -19,9 +19,15 @@ def has_error_class(wait, locator):
     error_class = element.get_attribute('class')
     return error_class
 
-def fill_registration_form(driver, wait, email):
+def fill_registration_form(driver, wait, email, password):
     wait.until(
         EC.visibility_of_element_located(RegistrationLocators.EMAIL_FIELD))
     driver.find_element(*RegistrationLocators.EMAIL_FIELD).send_keys(email)
-    driver.find_element(*RegistrationLocators.PASSWORD_FIELD).send_keys(data.user_password)
-    driver.find_element(*RegistrationLocators.REPEAT_PASSWORD_FIELD).send_keys(data.user_password)
+    driver.find_element(*RegistrationLocators.PASSWORD_FIELD).send_keys(password)
+    driver.find_element(*RegistrationLocators.REPEAT_PASSWORD_FIELD).send_keys(password)
+
+def fill_login_form(driver, wait, email, password):
+    wait.until(
+        EC.visibility_of_element_located(AuthorizationLocators.EMAIL_FIELD))
+    driver.find_element(*AuthorizationLocators.EMAIL_FIELD).send_keys(email)
+    driver.find_element(*AuthorizationLocators.PASSWORD_FIELD).send_keys(password)
