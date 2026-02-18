@@ -11,7 +11,7 @@ import helpers
 @pytest.fixture(scope='function')
 def driver():
     driver = webdriver.Chrome()
-    driver.get(data.test_url)
+    driver.get(data.base_url)
     yield driver
     driver.quit()
 

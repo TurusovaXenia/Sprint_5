@@ -2,21 +2,32 @@ from datetime import datetime
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
 
-from locators import RegistrationLocators, AuthorizationLocators
+from locators import RegistrationLocators, AuthorizationLocators, HeaderLocators
 
 def generate_email(domain='test.com'):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     return f'test_{timestamp}@{domain}'
 
-def get_hex_color(wait, locator):
-    element = wait.until(EC.visibility_of_element_located(locator))
-    rgba = element.value_of_css_property('border-color')
-    return Color.from_string(rgba).hex.upper()
-
-def has_error_class(wait, locator):
+def get_element_error_state(wait, locator):
     element = wait.until(EC.visibility_of_element_located(locator))
     error_class = element.get_attribute('class')
-    return error_class
+
+    rgba = element.value_of_css_property('border-color')
+    hex_color = Color.from_string(rgba).hex.upper()
+
+    return {
+        "error_class": error_class,
+        "color": hex_color,
+    }
+
+def open_registration_form(wait):
+    wait.until(
+        EC.element_to_be_clickable(HeaderLocators.LOGIN_BUTTON)).click()
+
+    no_account_button = wait.until(
+        EC.element_to_be_clickable(RegistrationLocators.NO_ACCOUNT_BUTTON))
+    no_account_button.click()
+    wait.until(EC.staleness_of(no_account_button))
 
 def fill_registration_form(driver, wait, email, password):
     wait.until(

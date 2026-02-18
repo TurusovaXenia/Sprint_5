@@ -1,8 +1,9 @@
 from selenium.webdriver.support import expected_conditions as EC
 
-import helpers
-from locators import HeaderLocators, AuthorizationLocators, HomePageLocators
 import data
+import helpers
+from locators import AuthorizationLocators, HeaderLocators, HomePageLocators
+
 
 class TestLogin:
 
@@ -12,21 +13,23 @@ class TestLogin:
 
         helpers.fill_login_form(driver, wait, existing_user, data.user_password)
 
-        driver.find_element(*AuthorizationLocators.SIGNIN_BUTTON).click()
-
-        #проверка исчезновения окна логина
         wait.until(
-            EC.invisibility_of_element_located(AuthorizationLocators.CONTAINER))
+            EC.element_to_be_clickable(AuthorizationLocators.SIGNIN_BUTTON)).click()
 
-        # проверка перехода на главную страницу по уникальному элементу страницы
         wait.until(
-            EC.visibility_of_element_located(HomePageLocators.CONTAINER))
+            EC.invisibility_of_element_located(AuthorizationLocators.CONTAINER),
+            message="Окно входа в систему не закрылось после нажатия кнопки 'Войти'")
+
+        wait.until(
+            EC.visibility_of_element_located(HomePageLocators.CONTAINER),
+            message="Не выполнен переход на главную страницу после входа в систему")
 
         user_name_field = wait.until(
-            EC.visibility_of_element_located(HeaderLocators.USERNAME_FIELD))
+            EC.visibility_of_element_located(HeaderLocators.USER_NAME_FIELD),
+            message="Вход не завершен: имя пользователя не появилось в хедере")
 
-        user_avatar = wait.until(
-            EC.visibility_of_element_located(HeaderLocators.USER_AVATAR))
+        assert user_name_field.text == data.exp_user_name, \
+            f"Ожидаемое имя пользователя - '{data.exp_user_name}', но получено '{user_name_field.text}'"
 
-        assert user_name_field.text == 'User.', f"Ожидаемое имя пользователя - 'User.', но получено '{user_name_field.text}'"
-        assert user_avatar.is_displayed()
+        assert driver.find_element(*HeaderLocators.USER_AVATAR).is_displayed(), \
+            "Аватар пользователя не отображается в хедере"

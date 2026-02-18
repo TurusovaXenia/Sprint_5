@@ -24,7 +24,7 @@ class HeaderLocators:
     LOGIN_BUTTON = (By.XPATH, ".//button[text()='Вход и регистрация']")
     CREATE_NOTICE_BUTTON = (By.XPATH, ".//button[text()='Разместить объявление']")
     LOGOUT_BUTTON = (By.XPATH, ".//button[contains(@class, 'spanGlobal')]")
-    USERNAME_FIELD = (By.CSS_SELECTOR, "div[class^='header'] h3")
+    USER_NAME_FIELD = (By.CSS_SELECTOR, "div[class^='header'] h3")
     USER_AVATAR = (By.CSS_SELECTOR, "button.circleSmall")
 
 class NoticePageLocators:

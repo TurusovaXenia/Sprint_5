@@ -1,27 +1,29 @@
 from selenium.webdriver.support import expected_conditions as EC
 
-import helpers
-from locators import HeaderLocators, AuthorizationLocators, NoticePageLocators, ProfilePageLocators, HomePageLocators
 import data
+import helpers
+from locators import AuthorizationLocators, HeaderLocators, HomePageLocators, NoticePageLocators, ProfilePageLocators
 
 
 class TestCreateNotice:
 
     def test_create_notice_unauthorized_user_shows_login_popup(self, driver, wait):
-        driver.find_element(*HeaderLocators.CREATE_NOTICE_BUTTON).click()
+        wait.until(
+            EC.element_to_be_clickable(HeaderLocators.CREATE_NOTICE_BUTTON)).click()
 
-        assert wait.until(
-            EC.visibility_of_element_located(AuthorizationLocators.CONTAINER)), \
-            "Окно для входа в систему не отображается"
+        wait.until(
+            EC.visibility_of_element_located(AuthorizationLocators.CONTAINER),
+            "Окно для входа в систему не отображается")
 
-        title = driver.find_element(*AuthorizationLocators.CONTAINER_TITLE)
+        title = wait.until(
+            EC.visibility_of_element_located(AuthorizationLocators.CONTAINER_TITLE))
 
-        assert title.text == 'Чтобы разместить объявление, авторизуйтесь', \
-            f"Ожидаемый заголовок окна - 'Чтобы разместить объявление, авторизуйтесь', но получено '{title.text}'"
+        assert title.text == data.exp_login_popup_title, \
+            f"Ожидаемый заголовок окна - '{data.exp_login_popup_title}', но получено '{title.text}'"
 
     def test_create_notice_success(self, driver, wait, existing_user):
         wait.until(
-            EC.visibility_of_element_located(HeaderLocators.LOGIN_BUTTON)).click()
+            EC.element_to_be_clickable(HeaderLocators.LOGIN_BUTTON)).click()
 
         helpers.fill_login_form(driver, wait, existing_user, data.user_password)
 
