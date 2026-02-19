@@ -8,7 +8,7 @@ from locators import HeaderLocators, HomePageLocators, RegistrationLocators
 
 class TestRegistration:
 
-    def test_register_user_success(self, driver, wait):
+    def test_register_new_user_success(self, driver, wait):
         helpers.open_registration_form(wait)
 
         helpers.fill_registration_form(driver, wait, helpers.generate_email(), data.user_password)

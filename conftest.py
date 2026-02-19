@@ -1,12 +1,12 @@
 import pytest
 from selenium import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-from locators import RegistrationLocators, HeaderLocators
+from selenium.webdriver.support.wait import WebDriverWait
 
 import data
 import helpers
+from locators import HeaderLocators, RegistrationLocators
+
 
 @pytest.fixture(scope='function')
 def driver():
@@ -21,20 +21,25 @@ def wait(driver):
 
 @pytest.fixture(scope='function')
 def existing_user(driver, wait):
-    driver.find_element(*HeaderLocators.LOGIN_BUTTON).click()
+    wait.until(
+        EC.element_to_be_clickable(HeaderLocators.LOGIN_BUTTON)).click()
 
     no_account_button = wait.until(
-        EC.visibility_of_element_located(RegistrationLocators.NO_ACCOUNT_BUTTON))
+        EC.element_to_be_clickable(RegistrationLocators.NO_ACCOUNT_BUTTON))
     no_account_button.click()
     wait.until(EC.staleness_of(no_account_button))
 
     email = helpers.generate_email()
-    helpers.fill_registration_form(driver, wait, email, data.user_password)
+    password = data.user_password
 
-    driver.find_element(*RegistrationLocators.CREATE_ACCOUNT_BUTTON).click()
+    helpers.fill_registration_form(driver, wait, email, password)
 
     wait.until(
-        EC.visibility_of_element_located(HeaderLocators.LOGOUT_BUTTON)).click()
+        EC.element_to_be_clickable(RegistrationLocators.CREATE_ACCOUNT_BUTTON)).click()
+
+    wait.until(
+        EC.element_to_be_clickable(HeaderLocators.LOGOUT_BUTTON),
+        message="Пользователь не был авторизирован после регистрации").click()
 
     driver.delete_all_cookies()
 

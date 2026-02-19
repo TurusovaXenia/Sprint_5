@@ -7,7 +7,7 @@ from locators import AuthorizationLocators, HeaderLocators, HomePageLocators, No
 
 class TestCreateNotice:
 
-    def test_create_notice_unauthorized_user_shows_login_popup(self, driver, wait):
+    def test_create_notice_unauthorized_user_redirects_to_login(self, driver, wait):
         wait.until(
             EC.element_to_be_clickable(HeaderLocators.CREATE_NOTICE_BUTTON)).click()
 
@@ -21,7 +21,7 @@ class TestCreateNotice:
         assert title.text == data.exp_login_popup_title, \
             f"Ожидаемый заголовок окна - '{data.exp_login_popup_title}', но получено '{title.text}'"
 
-    def test_create_notice_success(self, driver, wait, existing_user):
+    def test_create_notice_adds_to_profile(self, driver, wait, existing_user):
         wait.until(
             EC.element_to_be_clickable(HeaderLocators.LOGIN_BUTTON)).click()
 
@@ -42,24 +42,31 @@ class TestCreateNotice:
         driver.find_element(*NoticePageLocators.PRICE_FIELD).send_keys(data.notice_price)
 
         driver.find_element(*NoticePageLocators.CATEGORY_DROPDOWN_ARROW_BUTTON).click()
-        driver.find_element(*NoticePageLocators.SELECTED_CATEGORY_ITEM).click()
+
+        wait.until(
+            EC.element_to_be_clickable(NoticePageLocators.SELECTED_CATEGORY_ITEM)).click()
 
         driver.find_element(*NoticePageLocators.CITY_DROPDOWN_ARROW_BUTTON).click()
-        driver.find_element(*NoticePageLocators.SELECTED_CITY_ITEM).click()
+
+        wait.until(
+            EC.element_to_be_clickable(NoticePageLocators.SELECTED_CITY_ITEM)).click()
 
         driver.find_element(*NoticePageLocators.SELECTED_CONDITION).click()
         driver.find_element(*NoticePageLocators.POST_BUTTON).click()
 
         wait.until(
-            EC.visibility_of_element_located(HomePageLocators.CONTAINER))
+            EC.visibility_of_element_located(HomePageLocators.CONTAINER),
+            message="Не выполнен переход на главную страницу после создания объявления")
 
         wait.until(
             EC.element_to_be_clickable(HeaderLocators.USER_AVATAR)).click()
 
         wait.until(
-            EC.visibility_of_element_located(ProfilePageLocators.CONTAINER))
+            EC.visibility_of_element_located(ProfilePageLocators.CONTAINER),
+            message="Не выполнен переход на страницу с профилем пользователя")
 
-        created_notice_name = wait.until(
-            EC.visibility_of_element_located(ProfilePageLocators.CREATED_NOTICE_NAME))
+        created_notice = wait.until(
+            EC.visibility_of_element_located(ProfilePageLocators.CREATED_NOTICE_NAME),
+            message="Новое объявление не появилось в профиле")
 
-        assert created_notice_name.text == notice_name
+        assert created_notice.text == notice_name

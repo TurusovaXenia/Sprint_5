@@ -1,12 +1,16 @@
+import random
 from datetime import datetime
+
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.color import Color
 
-from locators import RegistrationLocators, AuthorizationLocators, HeaderLocators
+from locators import AuthorizationLocators, HeaderLocators, RegistrationLocators
+
 
 def generate_email(domain='test.com'):
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    return f'test_{timestamp}@{domain}'
+    rand_int = random.randint(1, 99)
+    return f'test_{timestamp}_{rand_int}@{domain}'
 
 def get_element_error_state(wait, locator):
     element = wait.until(EC.visibility_of_element_located(locator))
@@ -44,4 +48,5 @@ def fill_login_form(driver, wait, email, password):
 
 def generate_notice_name():
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-    return f'Набор_{timestamp}'
+    rand_int = random.randint(1, 99)
+    return f'Набор_{timestamp}_{rand_int}'
