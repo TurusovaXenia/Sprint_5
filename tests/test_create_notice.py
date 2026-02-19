@@ -27,9 +27,16 @@ class TestCreateNotice:
 
         helpers.fill_login_form(driver, wait, existing_user, data.user_password)
 
-        sign_in_button = driver.find_element(*AuthorizationLocators.SIGNIN_BUTTON)
-        sign_in_button.click()
-        wait.until(EC.staleness_of(sign_in_button))
+        wait.until(
+            EC.element_to_be_clickable(AuthorizationLocators.SIGNIN_BUTTON)).click()
+
+        wait.until(
+            EC.invisibility_of_element_located(AuthorizationLocators.CONTAINER),
+            message="Окно входа в систему не закрылось после нажатия кнопки 'Войти'")
+
+        wait.until(
+            EC.visibility_of_element_located(HomePageLocators.CONTAINER),
+            message="Не выполнен переход на главную страницу после входа в систему")
 
         wait.until(
             EC.element_to_be_clickable(HeaderLocators.CREATE_NOTICE_BUTTON)).click()
